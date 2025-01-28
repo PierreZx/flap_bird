@@ -19,6 +19,7 @@ class MyGame extends FlameGame with HasCollisionDetection, TapDetector {
   int score = 0;
   late TextComponent scoreText;
   late TextComponent gameOverText;
+  late TextComponent gameOverText2;
   bool isGameOver = false;
 
   GameState gameState = GameState.menu;
@@ -28,7 +29,8 @@ class MyGame extends FlameGame with HasCollisionDetection, TapDetector {
 
   @override
   Future<void> onLoad() async {
-
+    super.onLoad();
+    //debugMode = true;
     background = SpriteComponent()
       ..sprite = await Sprite.load('Lukewarm_Ocean.webp')
       ..size = size
@@ -37,26 +39,46 @@ class MyGame extends FlameGame with HasCollisionDetection, TapDetector {
 
     player = Player()
       ..position = Vector2(100, 220)
-      ..size = Vector2(90, 90);
+      ..size = Vector2(50, 50);
 
+  final textPaint = TextPaint(
+      style: TextStyle(
+        fontFamily: 'Mojangles',
+        fontSize: 45,
+        color: Colors.white,
+      ),
+    );
+
+  final textPaint2 = TextPaint(
+      style: TextStyle(
+        fontFamily: 'Mojangles',
+        fontSize: 20,
+        color: Colors.white,
+      ),
+    );
 
     scoreText = TextComponent(
       text: '$score',
-      position: Vector2(10, 10),
+      position: Vector2(290, 100),
       anchor: Anchor.topLeft,
-      textRenderer: TextPaint(
-        style: const TextStyle(color: Colors.white, fontSize: 24),
-      ),
+      textRenderer: textPaint,
+      priority: 10,
     );
 
-    gameOverText = TextComponent(
-      text: 'GAME OVER',
-      position: Vector2(size.x / 2 - 120, size.y / 2 - 40),
-      anchor: Anchor.topLeft,
-      textRenderer: TextPaint(
-        style: const TextStyle(color: Colors.white, fontSize: 48),
-      ),
-    );
+gameOverText = TextComponent(
+  text: 'GAME OVER',
+  position: Vector2(size.x / 2, size.y / 2 - 40), // Centralizado horizontalmente
+  anchor: Anchor.topCenter, // Centraliza o texto horizontalmente em relação à posição
+  textRenderer: textPaint2,
+);
+
+// Texto secundário "(Clique na tela para começar novamente)"
+gameOverText2 = TextComponent(
+  text: '(Clique na tela para começar novamente)',
+  position: Vector2(size.x / 2, size.y / 2 + 10), // Posicionado abaixo do "GAME OVER"
+  anchor: Anchor.topCenter, // Centraliza o texto horizontalmente em relação à posição
+  textRenderer: textPaint2,
+);
 
 
     add(background);
@@ -110,6 +132,7 @@ class MyGame extends FlameGame with HasCollisionDetection, TapDetector {
     children.whereType<PipePair>().forEach((pipe) => pipe.removeFromParent());
     isGameOver = false;
     gameOverText.removeFromParent();
+    gameOverText2.removeFromParent();
   }
 
   void gameOver() {
@@ -117,6 +140,7 @@ class MyGame extends FlameGame with HasCollisionDetection, TapDetector {
     isGameOver = true;
 
     add(gameOverText);
+    add(gameOverText2);
 
 
     children.whereType<PipePair>().forEach((pipe) => pipe.stopMoving());
@@ -133,12 +157,16 @@ class MyGame extends FlameGame with HasCollisionDetection, TapDetector {
 }
 
 class Player extends SpriteComponent with CollisionCallbacks {
-  double velocityY = 0; // Defina a variável velocityY aqui
+  double velocityY = 0;
 
   @override
   Future<void> onLoad() async {
     sprite = await Sprite.load('player.png');
-    add(RectangleHitbox()..size = Vector2(1, 1));
+    add(
+      RectangleHitbox()
+        ..size = Vector2(50, 50)
+        ..position = Vector2(25, 25),
+    );
   }
 
   @override
@@ -199,13 +227,13 @@ class PipePair extends PositionComponent {
       ..sprite = await Sprite.load('pilar.png')
       ..size = Vector2(60, 700)
       ..position = Vector2(0, topPipeHeight - 700)
-      ..add(RectangleHitbox()..size = Vector2(40, 500));
+      ..add(RectangleHitbox());
 
     bottomPipe = SpriteComponent()
       ..sprite = await Sprite.load('pilar.png')
       ..size = Vector2(60, 700)
       ..position = Vector2(0, topPipeHeight + spacing)
-      ..add(RectangleHitbox()..size = Vector2(40, 500));
+      ..add(RectangleHitbox());
 
     add(topPipe);
     add(bottomPipe);

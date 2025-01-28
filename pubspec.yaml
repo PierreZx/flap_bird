@@ -23,7 +23,6 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
-
   uses-material-design: true
 
   assets:
@@ -33,7 +32,9 @@ flutter:
     - assets/images/pilar.jpg
     - assets/images/Lukewarm_Ocean.webp
     - assets/images/pilar.png
+    - assets/images/menu.png
 
   fonts:
-    - family: Game
+    - family: Mojangles
       fonts:
+        - asset: assets/images/fonts/Mojangles.ttf
